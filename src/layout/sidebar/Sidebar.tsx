@@ -12,6 +12,8 @@ type MenuItem = Required<MenuProps>['items'][number];
 const items: MenuItem[] = [
   { label: <NavLink to="/">Dashboard</NavLink>, key: '/', icon: <PieChartOutlined /> },
   { label: <NavLink to="/users">Users</NavLink>, key: '/users', icon: <UserOutlined /> },
+  { label: <NavLink to="/orders">Orders</NavLink>, key: '/orders', icon: <UserOutlined /> },
+  { label: <NavLink to="/products">Products</NavLink>, key: '/products', icon: <UserOutlined /> },
   // getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
 ];
 
