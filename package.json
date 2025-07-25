@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.83.0",
+    "@tanstack/react-table": "^8.21.3",
     "@types/lodash": "^4.17.20",
     "@types/node": "^24.1.0",
     "antd": "^5.26.6",

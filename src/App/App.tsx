@@ -2,7 +2,7 @@ import React from 'react';
 import { Header } from '@/layout/header/Header';
 import { Sidebar } from '@/layout/sidebar/Sidebar';
 import { DashboardPage } from '@/pages/dashboard/Dashboard.page';
-import { Patients } from '@/pages/patients/Patients';
+import { Users } from '@/pages/users/Users';
 import { Route, Routes } from 'react-router';
 import { Layout } from 'antd';
 
@@ -20,7 +20,7 @@ const App: React.FC = () => {
           <Content className={styles.main}>
             <Routes>
               <Route path="/" element={<DashboardPage />} />
-              <Route path="/patients" element={<Patients />} />
+              <Route path="/users" element={<Users />} />
             </Routes>
           </Content>
         </Layout>
