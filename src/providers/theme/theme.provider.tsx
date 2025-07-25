@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ConfigProvider, theme as antdTheme } from 'antd';
 import { merge } from 'lodash';
 
@@ -35,11 +35,8 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
-  const antdThemeConfig = useMemo(
-    () => (theme === 'dark' ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm),
-    [theme],
-  );
-
+  // React Compiler will automatically memoize these expensive computations
+  const antdThemeConfig = theme === 'dark' ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm;
   const antdThemeConfigured = merge(theme === 'dark' ? darkAntConfig : lightAntConfig, commonConfig);
 
   return (
