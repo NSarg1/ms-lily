@@ -1,0 +1,27 @@
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  base: '/health-hub',
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': '/src',
+    },
+  },
+  server: { port: 3000 },
+  css: {
+    modules: {
+      localsConvention: 'dashes',
+      generateScopedName: '[name]__[local]__[hash:base64:5]',
+    },
+    preprocessorOptions: {
+      scss: {
+        additionalData: `
+          @use "@/styles/variables.scss" as *;
+          @use "@/styles/mixins.scss" as *;
+        `,
+      },
+    },
+  },
+});
