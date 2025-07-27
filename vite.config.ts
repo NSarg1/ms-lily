@@ -23,7 +23,10 @@ export default defineConfig({
       '@': '/src',
     },
   },
-  server: { port: 3000 },
+  server: {
+    port: 5173,
+    host: true,
+  },
   css: {
     modules: {
       localsConvention: 'dashes',

@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 
-axios.defaults.baseURL = process.env.VITE_BASE_URL;
+axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
 axios.interceptors.request.use((request) => {
   return request;

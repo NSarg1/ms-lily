@@ -1,36 +1,57 @@
-import React, { useState } from 'react';
-import { authApi } from '@/service/auth/auth.api';
+import React, { useEffect } from 'react';
 import { LoginRequest } from '@/service/service.types';
+import { selectAuthError, selectAuthLoading, selectIsAuthenticated } from '@/store/auth/auth.selectors';
+import { clearError, loginUser } from '@/store/auth/auth.slice';
+import { AppDispatch } from '@/store/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { Navigate, useLocation } from 'react-router';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Card, Form, Input, message, Typography } from 'antd';
+import { Alert, Button, Card, Form, Input, message, Typography } from 'antd';
 
 import styles from './login.module.scss';
 
 const { Title, Text } = Typography;
 
 export const LoginPage: React.FC = () => {
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const location = useLocation();
   const [form] = Form.useForm();
 
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const loading = useSelector(selectAuthLoading);
+  const error = useSelector(selectAuthError);
+
+  const from = (location.state as any)?.from?.pathname || '/';
+
+  useEffect(() => {
+    // Clear any previous errors when component mounts
+    if (error) {
+      dispatch(clearError());
+    }
+  }, [dispatch, error]);
+
+  useEffect(() => {
+    // Show error message if login fails
+    if (error) {
+      message.error(error);
+    }
+  }, [error]);
+
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    return <Navigate to={from} replace />;
+  }
+
   const onFinish = async (values: LoginRequest) => {
-    setLoading(true);
     try {
-      // Get CSRF token first
-      await authApi.getCsrfToken();
-
-      // Attempt login
-      const response = await authApi.login(values);
-
-      message.success('Login successful!');
-      console.log('Login response:', response.data);
-
-      // Handle successful login (redirect, store token, etc.)
-      // You can implement your login logic here
-    } catch (error: any) {
-      message.error(error.response?.data?.message || 'Login failed');
+      const result = await dispatch(loginUser(values));
+      if (loginUser.fulfilled.match(result)) {
+        message.success('Login successful!');
+        // Navigation will happen automatically due to isAuthenticated change
+      }
+    } catch (error) {
+      // Error handling is done in the slice
       console.error('Login error:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -46,6 +67,17 @@ export const LoginPage: React.FC = () => {
               Sign in to your account
             </Text>
           </div>
+
+          {error && (
+            <Alert
+              message={error}
+              type="error"
+              showIcon
+              closable
+              style={{ marginBottom: 24 }}
+              onClose={() => dispatch(clearError())}
+            />
+          )}
 
           <Form
             form={form}
