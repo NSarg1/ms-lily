@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { ApiResponse, CreateCommentRequest, PaginatedResponse } from '../service.types';
 
 export const commentsApi = {

@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { ApiResponse, DashboardStats } from '../service.types';
 
 export const adminApi = {

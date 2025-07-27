@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { ApiResponse, LoginRequest, RegisterRequest, User } from '../service.types';
 
 export const authApi = {

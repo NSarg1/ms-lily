@@ -1,4 +1,5 @@
 import axios from '@/configs/axios.config';
+
 import { ApiResponse, Brand, Category, CreateProductRequest, PaginatedResponse, Product, Tag } from '../service.types';
 
 export const productsApi = {

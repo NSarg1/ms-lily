@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router';
-import { DoubleLeftOutlined, DoubleRightOutlined, PieChartOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  DoubleLeftOutlined,
+  DoubleRightOutlined,
+  PieChartOutlined,
+  ShopOutlined,
+  ShoppingCartOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { Button, Layout, Menu, MenuProps } from 'antd';
 
 import styles from './sidebar.module.scss';
@@ -12,8 +19,8 @@ type MenuItem = Required<MenuProps>['items'][number];
 const items: MenuItem[] = [
   { label: <NavLink to="/">Dashboard</NavLink>, key: '/', icon: <PieChartOutlined /> },
   { label: <NavLink to="/users">Users</NavLink>, key: '/users', icon: <UserOutlined /> },
-  { label: <NavLink to="/orders">Orders</NavLink>, key: '/orders', icon: <UserOutlined /> },
-  { label: <NavLink to="/products">Products</NavLink>, key: '/products', icon: <UserOutlined /> },
+  { label: <NavLink to="/orders">Orders</NavLink>, key: '/orders', icon: <ShoppingCartOutlined /> },
+  { label: <NavLink to="/products">Products</NavLink>, key: '/products', icon: <ShopOutlined /> },
   // getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
 ];
 

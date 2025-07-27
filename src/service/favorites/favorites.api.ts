@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { ApiResponse, Favorite, PaginatedResponse } from '../service.types';
 
 export const favoritesApi = {
