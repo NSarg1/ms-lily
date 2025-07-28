@@ -1,37 +1,133 @@
-import { useState } from 'react';
-import { IProduct, TagProps } from '@/service/service.types';
-import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { Badge, Button, Card, Col, Image, Input, Row, Select, Space, Table, Tag, Tooltip, Typography } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { useEffect, useState } from 'react';
+import { productsApi } from '@/service/products/products.api';
+import { BrandProps, CategoryProps, IProduct } from '@/service/service.types';
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Input, message, Row, Select, Table, Typography } from 'antd';
 
 import styles from './products.module.scss';
 
-import { mockProducts } from './products.mock';
+import { productsColumns } from './products.utils';
 
 const { Title } = Typography;
 const { Search } = Input;
 const { Option } = Select;
 
 export const Products = () => {
-  const [products, setProducts] = useState<IProduct[]>(mockProducts);
+  const [products, setProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
   const [selectedBrand, setSelectedBrand] = useState<string | undefined>();
+  const [categories, setCategories] = useState<CategoryProps[]>([]);
+  const [brands, setBrands] = useState<BrandProps[]>([]);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  });
 
-  // Get unique categories and brands for filters
-  const categories = Array.from(new Set(products.map((p) => p.category.name)));
-  const brands = Array.from(new Set(products.map((p) => p.brand.name)));
+  // Fetch products from API
+  const fetchProducts = async (page = 1, pageSize = 10) => {
+    try {
+      setLoading(true);
+      const response = await productsApi.getProducts({
+        page,
+        per_page: pageSize,
+      });
 
-  // Filter products based on search and filters
+      if (response.data) {
+        setProducts(response.data.data);
+        setPagination({
+          current: response.data.current_page,
+          pageSize: response.data.per_page,
+          total: response.data.total,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to fetch products:', error);
+      message.error('Failed to load products');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch categories from API
+  const fetchCategories = async () => {
+    try {
+      const response = await productsApi.getCategories();
+      if (response.data) setCategories(response.data);
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+    }
+  };
+
+  // Fetch brands from API
+  const fetchBrands = async () => {
+    try {
+      const response = await productsApi.getBrands();
+      if (response.data) setBrands(response.data);
+    } catch (error) {
+      console.error('Failed to fetch brands:', error);
+    }
+  };
+
+  // Filter products by category
+  const filterByCategory = async (categoryId: number) => {
+    try {
+      setLoading(true);
+      const response = await productsApi.filterByCategory(categoryId);
+      if (response.data) {
+        setProducts(response.data.data);
+        setPagination({
+          current: response.data.current_page,
+          pageSize: response.data.per_page,
+          total: response.data.total,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to filter by category:', error);
+      message.error('Failed to filter products');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filter products by brand
+  const filterByBrand = async (brandId: number) => {
+    try {
+      setLoading(true);
+      const response = await productsApi.filterByBrand(brandId);
+      if (response.data) {
+        setProducts(response.data.data);
+        setPagination({
+          current: response.data.current_page,
+          pageSize: response.data.per_page,
+          total: response.data.total,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to filter by brand:', error);
+      message.error('Failed to filter products');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initialize data on component mount
+  useEffect(() => {
+    fetchProducts();
+    fetchCategories();
+    fetchBrands();
+  }, []);
+
+  // Filter products based on search text (client-side filtering)
   const filteredProducts = products.filter((product) => {
     const matchesSearch =
+      searchText === '' ||
       product.name.toLowerCase().includes(searchText.toLowerCase()) ||
       product.description.toLowerCase().includes(searchText.toLowerCase());
-    const matchesCategory = !selectedCategory || product.category.name === selectedCategory;
-    const matchesBrand = !selectedBrand || product.brand.name === selectedBrand;
 
-    return matchesSearch && matchesCategory && matchesBrand;
+    return matchesSearch;
   });
 
   const handleEdit = (product: IProduct) => {
@@ -39,126 +135,44 @@ export const Products = () => {
     // TODO: Implement edit functionality
   };
 
-  const handleDelete = (productId: number) => {
-    console.log('Delete product:', productId);
-    // TODO: Implement delete functionality
+  const handleDelete = async (productId: number) => {
+    try {
+      await productsApi.deleteProduct(productId);
+      message.success('Product deleted successfully');
+      fetchProducts(pagination.current, pagination.pageSize);
+    } catch (error) {
+      console.error('Failed to delete product:', error);
+      message.error('Failed to delete product');
+    }
   };
 
-  const handleView = (product: IProduct) => {
-    console.log('View product:', product);
-    // TODO: Implement view functionality
+  const handleCategoryChange = (value: string | undefined) => {
+    setSelectedCategory(value);
+    if (value) {
+      const category = categories.find((cat) => cat.name === value);
+      if (category) {
+        filterByCategory(category.id);
+      }
+    } else {
+      fetchProducts();
+    }
   };
 
-  const getStockStatus = (stock: number) => {
-    if (stock === 0) return { color: 'error', text: 'Out of Stock' };
-    if (stock <= 5) return { color: 'warning', text: 'Low Stock' };
-    return { color: 'success', text: 'In Stock' };
+  const handleBrandChange = (value: string | undefined) => {
+    setSelectedBrand(value);
+    if (value) {
+      const brand = brands.find((b) => b.name === value);
+      if (brand) {
+        filterByBrand(brand.id);
+      }
+    } else {
+      fetchProducts();
+    }
   };
 
-  const columns: ColumnsType<IProduct> = [
-    {
-      title: 'Image',
-      dataIndex: 'image',
-      key: 'image',
-      width: 80,
-      render: (image: string | null) => (
-        <Image
-          width={50}
-          height={50}
-          src={image ? `https://via.placeholder.com/50x50?text=Shoe` : undefined}
-          fallback="https://via.placeholder.com/50x50?text=No+Image"
-          style={{ objectFit: 'cover', borderRadius: '4px' }}
-        />
-      ),
-    },
-    {
-      title: 'IProduct Name',
-      dataIndex: 'name',
-      key: 'name',
-      sorter: (a, b) => a.name.localeCompare(b.name),
-      render: (text: string, record: IProduct) => (
-        <div>
-          <div style={{ fontWeight: 500 }}>{text}</div>
-          <div style={{ fontSize: '12px', color: '#666' }}>{record.description}</div>
-        </div>
-      ),
-    },
-    {
-      title: 'Category',
-      dataIndex: ['category', 'name'],
-      key: 'category',
-      filters: categories.map((cat) => ({ text: cat, value: cat })),
-      onFilter: (value, record) => record.category.name === value,
-      render: (category: string) => <Tag color="blue">{category}</Tag>,
-    },
-    {
-      title: 'Brand',
-      dataIndex: ['brand', 'name'],
-      key: 'brand',
-      filters: brands.map((brand) => ({ text: brand, value: brand })),
-      onFilter: (value, record) => record.brand.name === value,
-      render: (brand: string) => <Tag color="green">{brand}</Tag>,
-    },
-    {
-      title: 'Price',
-      dataIndex: 'price',
-      key: 'price',
-      sorter: (a, b) => parseFloat(a.price) - parseFloat(b.price),
-      render: (price: string) => <span style={{ fontWeight: 500 }}>${price}</span>,
-    },
-    {
-      title: 'Stock',
-      dataIndex: 'stock',
-      key: 'stock',
-      sorter: (a, b) => a.stock - b.stock,
-      render: (stock: number) => {
-        const status = getStockStatus(stock);
-        return <Badge status={status.color as any} text={`${stock} (${status.text})`} />;
-      },
-    },
-    {
-      title: 'Size/Color',
-      key: 'details',
-      render: (_, record: IProduct) => (
-        <div>
-          <Tag color="default">Size: {record.size}</Tag>
-          <Tag color="default">{record.color}</Tag>
-        </div>
-      ),
-    },
-    {
-      title: 'Tags',
-      dataIndex: 'tags',
-      key: 'tags',
-      render: (tags: TagProps[]) => (
-        <div>
-          {tags.map((tag) => (
-            <Tag key={tag.id} color="purple" style={{ marginBottom: '2px' }}>
-              {tag.name}
-            </Tag>
-          ))}
-        </div>
-      ),
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      width: 150,
-      render: (_, record: IProduct) => (
-        <Space size="small">
-          <Tooltip title="View">
-            <Button type="text" icon={<EyeOutlined />} onClick={() => handleView(record)} />
-          </Tooltip>
-          <Tooltip title="Edit">
-            <Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
-          </Tooltip>
-          <Tooltip title="Delete">
-            <Button type="text" danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.id)} />
-          </Tooltip>
-        </Space>
-      ),
-    },
-  ];
+  const handleTableChange = (pagination: any) => {
+    fetchProducts(pagination.current, pagination.pageSize);
+  };
 
   return (
     <div className={styles.container}>
@@ -172,7 +186,7 @@ export const Products = () => {
             </Col>
             <Col>
               <Button type="primary" icon={<PlusOutlined />}>
-                Add New IProduct
+                Add New Product
               </Button>
             </Col>
           </Row>
@@ -193,11 +207,11 @@ export const Products = () => {
                 allowClear
                 style={{ width: '100%' }}
                 value={selectedCategory}
-                onChange={setSelectedCategory}
+                onChange={handleCategoryChange}
               >
                 {categories.map((category) => (
-                  <Option key={category} value={category}>
-                    {category}
+                  <Option key={category.id} value={category.name}>
+                    {category.name}
                   </Option>
                 ))}
               </Select>
@@ -208,11 +222,11 @@ export const Products = () => {
                 allowClear
                 style={{ width: '100%' }}
                 value={selectedBrand}
-                onChange={setSelectedBrand}
+                onChange={handleBrandChange}
               >
                 {brands.map((brand) => (
-                  <Option key={brand} value={brand}>
-                    {brand}
+                  <Option key={brand.id} value={brand.name}>
+                    {brand.name}
                   </Option>
                 ))}
               </Select>
@@ -221,17 +235,17 @@ export const Products = () => {
         </div>
 
         <Table
-          columns={columns}
+          columns={productsColumns}
           dataSource={filteredProducts}
           loading={loading}
           rowKey="id"
           pagination={{
-            total: filteredProducts.length,
-            pageSize: 10,
+            ...pagination,
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} products`,
           }}
+          onChange={handleTableChange}
           scroll={{ x: 1200 }}
         />
       </Card>
