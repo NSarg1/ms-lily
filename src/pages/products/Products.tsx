@@ -6,6 +6,7 @@ import { Button, Card, Col, Input, message, Row, Select, Table, Typography } fro
 
 import styles from './products.module.scss';
 
+import { ProductCreateModal } from './components/product-create-modal/ProductCreateModal';
 import { createProductsColumns } from './products.utils';
 
 const { Title } = Typography;
@@ -20,6 +21,7 @@ export const Products = () => {
   const [selectedBrand, setSelectedBrand] = useState<string | undefined>();
   const [categories, setCategories] = useState<CategoryProps[]>([]);
   const [brands, setBrands] = useState<BrandProps[]>([]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
@@ -179,6 +181,15 @@ export const Products = () => {
     fetchProducts(pagination.current, pagination.pageSize);
   };
 
+  const handleCreateProduct = () => {
+    setIsCreateModalOpen(true);
+  };
+
+  const handleCreateSuccess = () => {
+    fetchProducts(pagination.current, pagination.pageSize);
+    setIsCreateModalOpen(false);
+  };
+
   // Create columns with handler functions
   const productsColumns = createProductsColumns({ handleEdit, handleDelete, handleView });
 
@@ -193,12 +204,13 @@ export const Products = () => {
               </Title>
             </Col>
             <Col>
-              <Button type="primary" icon={<PlusOutlined />}>
+              <Button type="primary" icon={<PlusOutlined />} onClick={handleCreateProduct}>
                 Add New Product
               </Button>
             </Col>
           </Row>
 
+          {/* Filters */}
           <Row gutter={16} style={{ marginBottom: '16px' }}>
             <Col xs={24} sm={12} md={8}>
               <Search
@@ -209,7 +221,7 @@ export const Products = () => {
                 onChange={(e) => setSearchText(e.target.value)}
               />
             </Col>
-            <Col xs={24} sm={6} md={4}>
+            <Col xs={12} sm={6} md={4} lg={3}>
               <Select
                 placeholder="Category"
                 allowClear
@@ -224,7 +236,7 @@ export const Products = () => {
                 ))}
               </Select>
             </Col>
-            <Col xs={24} sm={6} md={4}>
+            <Col xs={12} sm={6} md={4} lg={3}>
               <Select
                 placeholder="Brand"
                 allowClear
@@ -242,13 +254,16 @@ export const Products = () => {
           </Row>
         </div>
 
+        {/* Products Table */}
         <Table
           columns={productsColumns}
           dataSource={filteredProducts}
           loading={loading}
           rowKey="id"
           pagination={{
-            ...pagination,
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            total: pagination.total,
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} products`,
@@ -257,6 +272,13 @@ export const Products = () => {
           scroll={{ x: 1200 }}
         />
       </Card>
+
+      {/* Create Product Modal */}
+      <ProductCreateModal
+        open={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={handleCreateSuccess}
+      />
     </div>
   );
 };
