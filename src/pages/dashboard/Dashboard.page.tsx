@@ -7,7 +7,7 @@ export const DashboardPage = () => {
     <div className={styles.container}>
       <div className={styles.top}>
         <div>
-          <Typography.Title>Welcome, Narek Sargsyan</Typography.Title>
+          <Typography.Title>Welcome,</Typography.Title>
           <Typography.Text>wish you a productive day...</Typography.Text>
         </div>
       </div>
