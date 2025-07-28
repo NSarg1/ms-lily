@@ -42,19 +42,23 @@ export const productsApi = {
 
   // Admin product management
   createProduct: (data: CreateProductRequest): Promise<ApiResponse<IProduct>> => {
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === 'images' && Array.isArray(value)) {
-        value.forEach((file) => formData.append('images[]', file));
-      } else if (key === 'tags' && Array.isArray(value)) {
-        value.forEach((tag) => formData.append('tags[]', tag.toString()));
-      } else {
-        formData.append(key, value.toString());
-      }
-    });
-    return axios.post('/api/products/store', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    // const formData = new FormData();
+    // Object.entries(data).forEach(([key, value]) => {
+    //   if (key === 'images' && Array.isArray(value)) {
+    //     value.forEach((file) => formData.append('images[]', file));
+    //   } else if (key === 'tags' && Array.isArray(value)) {
+    //     value.forEach((tag) => formData.append('tags[]', tag.toString()));
+    //   } else {
+    //     formData.append(key, value.toString());
+    //   }
+    // });
+    return axios.post(
+      '/api/products/store',
+      data,
+      //   {
+      //   headers: { 'Content-Type': 'multipart/form-data' },
+      // }
+    );
   },
 
   updateProduct: (id: number, data: Partial<CreateProductRequest>): Promise<ApiResponse<IProduct>> => {
