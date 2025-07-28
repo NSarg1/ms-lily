@@ -3,30 +3,8 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   // base: '/health-hub',
-  plugins: [
-    react({
-      babel: {
-        plugins: [
-          [
-            'babel-plugin-react-compiler',
-            {
-              // Enable the compiler in development and production
-              target: '19',
-            },
-          ],
-        ],
-      },
-    }),
-  ],
-  resolve: {
-    alias: {
-      '@': '/src',
-    },
-  },
-  server: {
-    port: 5173,
-    host: true,
-  },
+  plugins: [react({ babel: { plugins: [['babel-plugin-react-compiler', { target: '19' }]] } })],
+  resolve: { alias: { '@': '/src' } },
   css: {
     modules: {
       localsConvention: 'dashes',

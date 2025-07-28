@@ -1,28 +1,40 @@
-import React from 'react';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
+import React, { useEffect } from 'react';
+import { Loading } from '@/components/loading/Loading';
 import { Header } from '@/layout/header/Header';
 import { Sidebar } from '@/layout/sidebar/Sidebar';
 import { DashboardPage } from '@/pages/dashboard/Dashboard.page';
 import { LoginPage } from '@/pages/login/Login';
+import { Orders } from '@/pages/orders/Orders';
+import { Products } from '@/pages/products/Products';
 import { Users } from '@/pages/users/Users';
-import { persistor, store } from '@/store/store';
-import { Provider } from 'react-redux';
-import { Route, Routes } from 'react-router';
-import { Layout, Spin } from 'antd';
-import { PersistGate } from 'redux-persist/integration/react';
+import { selectAuthLoading, selectIsAuthenticated } from '@/store/auth/auth.selectors';
+import { fetchUser } from '@/store/auth/auth.slice';
+import { AppDispatch, persistor, store } from '@/store/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { Navigate, Route, Routes, useLocation } from 'react-router';
+import { Layout } from 'antd';
 
 import styles from './app.module.scss';
 
 const { Content } = Layout;
 
-const AppContent: React.FC = () => {
+const App: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const loading = useSelector(selectAuthLoading);
+
+  useEffect(() => {
+    dispatch(fetchUser());
+  }, []);
+
+  if (loading) return <Loading />;
+
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route
-        path="/*"
-        element={
-          <ProtectedRoute>
+      {isAuthenticated ? (
+        <Route
+          path="*"
+          element={
             <Layout className={styles.container}>
               <Header />
               <Layout>
@@ -32,40 +44,21 @@ const AppContent: React.FC = () => {
                     <Routes>
                       <Route path="/" element={<DashboardPage />} />
                       <Route path="/users" element={<Users />} />
+                      <Route path="/orders" element={<Orders />} />
+                      <Route path="/products" element={<Products />} />
                       {/* Add more protected routes here */}
                     </Routes>
                   </Content>
                 </Layout>
               </Layout>
             </Layout>
-          </ProtectedRoute>
-        }
-      />
+          }
+        />
+      ) : (
+        <Route path="/login" element={<LoginPage />} />
+      )}
+      <Route path="*" element={<Navigate to={'/login'} />} />
     </Routes>
-  );
-};
-
-const App: React.FC = () => {
-  return (
-    <Provider store={store}>
-      <PersistGate
-        loading={
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100vh',
-            }}
-          >
-            <Spin size="large" />
-          </div>
-        }
-        persistor={persistor}
-      >
-        <AppContent />
-      </PersistGate>
-    </Provider>
   );
 };
 

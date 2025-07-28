@@ -20,8 +20,8 @@ const initialState: AuthState = {
 
 // Async thunks
 export const loginUser = createAsyncThunk('auth/login', async (credentials: LoginRequest, { rejectWithValue }) => {
+  await authApi.getCsrfToken();
   try {
-    await authApi.getCsrfToken();
     const response = await authApi.login(credentials);
     return response.data;
   } catch (error: any) {
@@ -86,19 +86,16 @@ const authSlice = createSlice({
     // Login
     builder
       .addCase(loginUser.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         console.log(action);
-        state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token || null;
         state.isAuthenticated = true;
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
-        state.loading = false;
         state.error = action.payload as string;
         state.isAuthenticated = false;
       });
@@ -145,8 +142,9 @@ const authSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchUser.fulfilled, (state, action) => {
+        console.log(action);
         state.loading = false;
-        state.user = action.payload;
+        // state.user = action.payload;
         state.isAuthenticated = true;
         state.error = null;
       })
@@ -155,7 +153,7 @@ const authSlice = createSlice({
         state.error = action.payload as string;
         state.isAuthenticated = false;
         state.token = null;
-        state.user = null;
+        // state.user = null;
       });
   },
 });
