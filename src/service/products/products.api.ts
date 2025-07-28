@@ -1,6 +1,14 @@
 import axios from '@/configs/axios.config';
 
-import { ApiResponse, Brand, Category, CreateProductRequest, PaginatedResponse, Product, Tag } from '../service.types';
+import {
+  ApiResponse,
+  BrandProps,
+  CategoryProps,
+  CreateProductRequest,
+  IProduct,
+  PaginatedResponse,
+  TagProps,
+} from '../service.types';
 
 export const productsApi = {
   // Public product endpoints
@@ -8,37 +16,37 @@ export const productsApi = {
     category?: string;
     page?: number;
     per_page?: number;
-  }): Promise<ApiResponse<PaginatedResponse<Product>>> => axios.get('/api/products', { params }),
+  }): Promise<ApiResponse<PaginatedResponse<IProduct>>> => axios.get('/api/products', { params }),
 
-  getProduct: (id: number): Promise<ApiResponse<Product>> => axios.get(`/api/products/${id}`),
+  getProduct: (id: number): Promise<ApiResponse<IProduct>> => axios.get(`/api/products/${id}`),
 
   // Filter endpoints
-  getCategories: (category?: string): Promise<ApiResponse<Category[]>> =>
+  getCategories: (category?: string): Promise<ApiResponse<CategoryProps[]>> =>
     axios.get('/api/products/categories', { params: { category } }),
 
-  getBrands: (category?: string): Promise<ApiResponse<Brand[]>> =>
+  getBrands: (category?: string): Promise<ApiResponse<BrandProps[]>> =>
     axios.get('/api/products/brands', { params: { category } }),
 
-  getTags: (category?: string): Promise<ApiResponse<Tag[]>> =>
+  getTags: (category?: string): Promise<ApiResponse<TagProps[]>> =>
     axios.get('/api/products/tags', { params: { category } }),
 
   // Filter products
-  filterByCategory: (categoryId: number, category?: string): Promise<ApiResponse<PaginatedResponse<Product>>> =>
+  filterByCategory: (categoryId: number, category?: string): Promise<ApiResponse<PaginatedResponse<IProduct>>> =>
     axios.get('/api/products/filter/category', { params: { category_id: categoryId, category } }),
 
-  filterByBrand: (brandId: number, category?: string): Promise<ApiResponse<PaginatedResponse<Product>>> =>
+  filterByBrand: (brandId: number, category?: string): Promise<ApiResponse<PaginatedResponse<IProduct>>> =>
     axios.get('/api/products/filter/brand', { params: { brand: brandId, category } }),
 
-  filterByTag: (tagId: number, category?: string): Promise<ApiResponse<PaginatedResponse<Product>>> =>
+  filterByTag: (tagId: number, category?: string): Promise<ApiResponse<PaginatedResponse<IProduct>>> =>
     axios.get('/api/products/filter/tag', { params: { tag: tagId, category } }),
 
   // Admin product management
   admin: {
-    getAllProducts: (): Promise<ApiResponse<PaginatedResponse<Product>>> => axios.get('/api/admin/products'),
+    getAllProducts: (): Promise<ApiResponse<PaginatedResponse<IProduct>>> => axios.get('/api/products'),
 
-    getProduct: (id: number): Promise<ApiResponse<Product>> => axios.get(`/api/admin/products/${id}`),
+    getProduct: (id: number): Promise<ApiResponse<IProduct>> => axios.get(`/api/products/${id}`),
 
-    createProduct: (data: CreateProductRequest): Promise<ApiResponse<Product>> => {
+    createProduct: (data: CreateProductRequest): Promise<ApiResponse<IProduct>> => {
       const formData = new FormData();
       Object.entries(data).forEach(([key, value]) => {
         if (key === 'images' && Array.isArray(value)) {
@@ -54,7 +62,7 @@ export const productsApi = {
       });
     },
 
-    updateProduct: (id: number, data: Partial<CreateProductRequest>): Promise<ApiResponse<Product>> => {
+    updateProduct: (id: number, data: Partial<CreateProductRequest>): Promise<ApiResponse<IProduct>> => {
       const formData = new FormData();
       Object.entries(data).forEach(([key, value]) => {
         if (key === 'images' && Array.isArray(value)) {

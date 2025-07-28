@@ -34,17 +34,22 @@ export interface User {
   updated_at: string;
 }
 
-export interface Product {
+export interface IProduct {
   id: number;
-  name: string;
-  description: string;
-  price: number;
-  category_id: number;
-  brand_id: number;
-  images: string[];
-  tags: number[];
   created_at: string;
   updated_at: string;
+  name: string;
+  description: string;
+  category_id: number;
+  brand_id: number;
+  color: string;
+  size: string;
+  image: string | null;
+  price: string;
+  stock: number;
+  category: CategoryProps;
+  brand: BrandProps;
+  tags: TagProps[];
 }
 
 export interface CreateProductRequest {
@@ -57,22 +62,29 @@ export interface CreateProductRequest {
   tags?: number[];
 }
 
-export interface Category {
+export type CategoryProps = {
   id: number;
   name: string;
-  description?: string;
-}
+  created_at: string | null;
+  updated_at: string | null;
+};
+export type BrandProps = {
+  id: number;
+  name: string;
+  created_at: string | null;
+  updated_at: string | null;
+};
 
-export interface Brand {
+export type TagProps = {
   id: number;
   name: string;
-  description?: string;
-}
-
-export interface Tag {
-  id: number;
-  name: string;
-}
+  created_at: string;
+  updated_at: string;
+  pivot: {
+    product_id: number;
+    tag_id: number;
+  };
+};
 
 export interface Order {
   id: number;
@@ -89,7 +101,7 @@ export interface OrderItem {
   product_id: number;
   quantity: number;
   price: number;
-  product: Product;
+  product: IProduct;
 }
 
 export interface Comment {
@@ -111,7 +123,7 @@ export interface Favorite {
   id: number;
   user_id: number;
   product_id: number;
-  product: Product;
+  product: IProduct;
   created_at: string;
 }
 
@@ -121,7 +133,7 @@ export interface DashboardStats {
   total_orders: number;
   total_revenue: number;
   recent_orders: Order[];
-  popular_products: Product[];
+  popular_products: IProduct[];
 }
 
 export interface ApiResponse<T> {
