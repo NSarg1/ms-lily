@@ -1,5 +1,5 @@
 import { IProduct, TagProps } from '@/service/service.types';
-import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import { Badge, Button, Image, Space, Tag, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 
@@ -9,7 +9,17 @@ const getStockStatus = (stock: number) => {
   return { color: 'success', text: 'In Stock' };
 };
 
-export const productsColumns: ColumnsType<IProduct> = [
+interface ProductsColumnsProps {
+  handleEdit: (product: IProduct) => void;
+  handleDelete: (productId: number) => void;
+  handleView: (productId: IProduct) => void;
+}
+
+export const createProductsColumns = ({
+  handleEdit,
+  handleDelete,
+  handleView,
+}: ProductsColumnsProps): ColumnsType<IProduct> => [
   {
     title: 'Image',
     dataIndex: 'image',
@@ -95,21 +105,17 @@ export const productsColumns: ColumnsType<IProduct> = [
     key: 'actions',
     width: 150,
     render: (_, record: IProduct) => {
-      const handleView = (product: IProduct) => {
-        console.log('View product:', product);
-        // TODO: Implement view functionality
-      };
       return (
         <Space size="small">
           <Tooltip title="View">
             <Button type="text" icon={<EyeOutlined />} onClick={() => handleView(record)} />
           </Tooltip>
-          {/* <Tooltip title="Edit">
+          <Tooltip title="Edit">
             <Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           </Tooltip>
           <Tooltip title="Delete">
             <Button type="text" danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.id)} />
-          </Tooltip> */}
+          </Tooltip>
         </Space>
       );
     },

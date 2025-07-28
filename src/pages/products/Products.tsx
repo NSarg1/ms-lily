@@ -6,7 +6,7 @@ import { Button, Card, Col, Input, message, Row, Select, Table, Typography } fro
 
 import styles from './products.module.scss';
 
-import { productsColumns } from './products.utils';
+import { createProductsColumns } from './products.utils';
 
 const { Title } = Typography;
 const { Search } = Input;
@@ -146,6 +146,11 @@ export const Products = () => {
     }
   };
 
+  const handleView = (product: IProduct) => {
+    console.log('View product:', product);
+    // TODO: Implement view functionality
+  };
+
   const handleCategoryChange = (value: string | undefined) => {
     setSelectedCategory(value);
     if (value) {
@@ -173,6 +178,9 @@ export const Products = () => {
   const handleTableChange = (pagination: any) => {
     fetchProducts(pagination.current, pagination.pageSize);
   };
+
+  // Create columns with handler functions
+  const productsColumns = createProductsColumns({ handleEdit, handleDelete, handleView });
 
   return (
     <div className={styles.container}>
