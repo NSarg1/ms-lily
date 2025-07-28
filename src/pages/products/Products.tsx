@@ -31,7 +31,6 @@ export const Products = () => {
   // Fetch products from API
   const fetchProducts = async (page = 1, pageSize = 10) => {
     try {
-      setLoading(true);
       const response = await productsApi.getProducts({
         page,
         per_page: pageSize,
@@ -48,8 +47,6 @@ export const Products = () => {
     } catch (error) {
       console.error('Failed to fetch products:', error);
       message.error('Failed to load products');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -115,12 +112,23 @@ export const Products = () => {
     }
   };
 
-  // Initialize data on component mount
+  // Initialize data on component mount - FIXED: Consolidated into single useEffect
   useEffect(() => {
-    fetchProducts();
-    fetchCategories();
-    fetchBrands();
-  }, []);
+    const initializePageData = async () => {
+      setLoading(true);
+      try {
+        // Fetch all data concurrently to prevent duplicate calls
+        await Promise.all([fetchProducts(), fetchCategories(), fetchBrands()]);
+      } catch (error) {
+        console.error('Failed to initialize page data:', error);
+        message.error('Failed to load page data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializePageData();
+  }, []); // Empty dependency array - only run once on mount
 
   // Filter products based on search text (client-side filtering)
   const filteredProducts = products.filter((product) => {
