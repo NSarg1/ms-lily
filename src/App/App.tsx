@@ -6,6 +6,7 @@ import { DashboardPage } from '@/pages/dashboard/Dashboard.page';
 import { LoginPage } from '@/pages/login/Login';
 import { Orders } from '@/pages/orders/Orders';
 import { Products } from '@/pages/products/Products';
+import { ProfilePage } from '@/pages/profile/Profile';
 import { Users } from '@/pages/users/Users';
 import { selectAuthLoading, selectIsAuthenticated } from '@/store/auth/auth.selectors';
 import { fetchUser } from '@/store/auth/auth.slice';
@@ -49,6 +50,7 @@ const App: React.FC = () => {
                       <Route path="/users" element={<Users />} />
                       <Route path="/orders" element={<Orders />} />
                       <Route path="/products" element={<Products />} />
+                      <Route path="/profile" element={<ProfilePage />} />
                       {/* Add more protected routes here */}
                     </Routes>
                   </Content>
