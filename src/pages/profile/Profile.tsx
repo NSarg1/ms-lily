@@ -6,7 +6,7 @@ import { AppDispatch } from '@/store/store';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { LockOutlined, MailOutlined, PhoneOutlined, SaveOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Form, Input, message, Row, Typography } from 'antd';
+import { App, Button, Card, Col, Form, Input, Row, Typography } from 'antd';
 
 import styles from './profile.module.scss';
 
@@ -26,6 +26,7 @@ interface ProfileFormData {
 }
 
 export const ProfilePage: React.FC = () => {
+  const { message } = App.useApp();
   const dispatch = useDispatch<AppDispatch>();
   const currentUser = useSelector(selectAuthUser);
 

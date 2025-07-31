@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ordersApi } from '@/service/orders/orders.api';
 import { Order } from '@/service/service.types';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Input, message, Row, Select, Statistic, Table, Typography } from 'antd';
+import { App, Button, Card, Col, Input, Row, Select, Statistic, Table, Typography } from 'antd';
 
 import styles from './orders.module.scss';
 
@@ -14,6 +14,7 @@ const { Search } = Input;
 const { Option } = Select;
 
 export const Orders = () => {
+  const { message } = App.useApp();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');

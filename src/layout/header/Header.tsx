@@ -5,11 +5,12 @@ import { AppDispatch } from '@/store/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { LogoutOutlined, MoonFilled, UserOutlined } from '@ant-design/icons';
-import { Avatar, Button, Dropdown, Flex, Layout, MenuProps, message, Space, Typography } from 'antd';
+import { App, Avatar, Button, Dropdown, Flex, Layout, MenuProps, Space, Typography } from 'antd';
 
 import styles from './header.module.scss';
 
 export const Header = () => {
+  const { message } = App.useApp();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { toggleTheme } = useTheme();

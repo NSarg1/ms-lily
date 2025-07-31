@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ConfigProvider, theme as antdTheme } from 'antd';
+import { App, ConfigProvider, theme as antdTheme } from 'antd';
 import { merge } from 'lodash';
 
 import { commonConfig, darkAntConfig, lightAntConfig } from './theme.config';
@@ -41,14 +41,8 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      <ConfigProvider
-        theme={{
-          cssVar: true,
-          algorithm: antdThemeConfig,
-          ...antdThemeConfigured,
-        }}
-      >
-        {children}
+      <ConfigProvider theme={{ cssVar: true, algorithm: antdThemeConfig, ...antdThemeConfigured }}>
+        <App>{children}</App>
       </ConfigProvider>
     </ThemeContext.Provider>
   );

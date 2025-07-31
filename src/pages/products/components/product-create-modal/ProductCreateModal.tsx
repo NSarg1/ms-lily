@@ -3,7 +3,7 @@ import { productsApi } from '@/service/products/products.api';
 import { CreateProductRequest } from '@/service/service.types';
 import { Controller, useForm } from 'react-hook-form';
 import { SaveOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Input, InputNumber, message, Modal, Row, Select, Upload } from 'antd';
+import { App, Button, Col, Form, Input, InputNumber, Modal, Row, Select, Upload } from 'antd';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -28,6 +28,7 @@ interface ProductCreateProps {
 }
 
 export const ProductCreateModal: React.FC<ProductCreateProps> = ({ open, onClose, onSuccess }) => {
+  const { message } = App.useApp();
   const {
     control,
     handleSubmit,

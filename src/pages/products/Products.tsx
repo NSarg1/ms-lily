@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { productsApi } from '@/service/products/products.api';
 import { BrandProps, CategoryProps, IProduct } from '@/service/service.types';
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Input, message, Row, Select, Table, Typography } from 'antd';
+import { App, Button, Card, Col, Input, Row, Select, Table, Typography } from 'antd';
 
 import styles from './products.module.scss';
 
@@ -14,6 +14,7 @@ const { Search } = Input;
 const { Option } = Select;
 
 export const Products = () => {
+  const { message } = App.useApp();
   const [products, setProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');

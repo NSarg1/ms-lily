@@ -10,11 +10,10 @@ import { ProfilePage } from '@/pages/profile/Profile';
 import { Users } from '@/pages/users/Users';
 import { selectAuthLoading, selectIsAuthenticated } from '@/store/auth/auth.selectors';
 import { fetchUser } from '@/store/auth/auth.slice';
-import { AppDispatch, persistor, store } from '@/store/store';
+import { AppDispatch } from '@/store/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { Navigate, Route, Routes, useLocation } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import { Layout } from 'antd';
-import Cookies from 'js-cookie';
 
 import styles from './app.module.scss';
 
@@ -27,11 +26,9 @@ const App: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchUser());
-  }, []);
+  }, [dispatch]);
 
   if (loading) return <Loading />;
-
-  console.log(Cookies.get());
 
   return (
     <Routes>

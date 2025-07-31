@@ -7,7 +7,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Alert, Button, Card, Input, message, Typography } from 'antd';
+import { Alert, App, Button, Card, Input, Typography } from 'antd';
 
 import styles from './login.module.scss';
 
@@ -19,6 +19,7 @@ interface LoginFormData {
 }
 
 export const LoginPage: React.FC = () => {
+  const { message } = App.useApp();
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
 
