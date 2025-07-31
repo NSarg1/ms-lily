@@ -2,6 +2,22 @@ import axios from 'axios';
 
 import { ApiResponse, CreateCommentRequest, PaginatedResponse } from '../service.types';
 
+// Add Comment interface to service.types.ts if not already present
+interface Comment {
+  id: number;
+  content: string;
+  user_id: number;
+  product_id: number;
+  status: 'pending' | 'approved' | 'rejected';
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  created_at: string;
+  updated_at: string;
+}
+
 export const commentsApi = {
   // Public comment endpoints
   getProductComments: (productId: number): Promise<ApiResponse<PaginatedResponse<Comment>>> =>

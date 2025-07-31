@@ -5,7 +5,7 @@ import { ApiResponse, Order, PaginatedResponse } from '../service.types';
 export const ordersApi = {
   // User orders
   getUserOrders: (config?: AxiosRequestConfig): Promise<ApiResponse<PaginatedResponse<Order>>> =>
-    axios.get('/api/admin/orders', config),
+    axios.get('/api/orders', config),
 
   createOrder: (items: { product_id: number; quantity: number }[]): Promise<ApiResponse<Order>> =>
     axios.post('/api/orders', { items }),
