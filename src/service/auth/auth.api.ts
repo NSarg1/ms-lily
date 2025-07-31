@@ -3,9 +3,6 @@ import axios from 'axios';
 import { ApiResponse, LoginRequest, RegisterRequest, User } from '../service.types';
 
 export const authApi = {
-  // Get CSRF token
-  getCsrfToken: () => axios.get('/sanctum/csrf-cookie'),
-
   // Authentication
   login: (body: LoginRequest): Promise<ApiResponse<{ user: User; token?: string }>> => axios.post('/api/login', body),
 

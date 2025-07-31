@@ -22,7 +22,6 @@ const initialState: AuthState = {
 // Async thunks
 export const loginUser = createAsyncThunk('auth/login', async (credentials: LoginRequest, { rejectWithValue }) => {
   try {
-    await authApi.getCsrfToken();
     const response = await authApi.login(credentials);
     return response.data;
   } catch (error: any) {
@@ -34,7 +33,6 @@ export const registerUser = createAsyncThunk(
   'auth/register',
   async (userData: RegisterRequest, { rejectWithValue }) => {
     try {
-      await authApi.getCsrfToken();
       const response = await authApi.register(userData);
       return response.data;
     } catch (error: any) {
