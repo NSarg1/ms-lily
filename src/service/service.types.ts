@@ -88,20 +88,19 @@ export type TagProps = {
 
 export interface Order {
   id: number;
-  user_id: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  total_amount: number;
-  items: OrderItem[];
+  total: string;
   created_at: string;
-  updated_at: string;
+  shipping_address: ShippingAddress;
+  items: OrderItem[];
 }
 
 export interface OrderItem {
-  id: number;
   product_id: number;
+  product_name: string;
   quantity: number;
-  price: number;
-  product: IProduct;
+  price: string;
+  total: string | null;
 }
 
 export interface Comment {
@@ -148,4 +147,16 @@ export interface PaginatedResponse<T> {
   last_page: number;
   per_page: number;
   total: number;
+}
+
+export interface ShippingAddress {
+  id: number;
+  full_name: string;
+  address_line1: string;
+  address_line2?: string;
+  city: string;
+  state: string;
+  postal_code: string;
+  country: string;
+  phone: string;
 }
