@@ -1,7 +1,6 @@
 import { authApi } from '@/service/auth/auth.api';
 import { LoginRequest, RegisterRequest, User } from '@/service/service.types';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { isEmpty } from 'lodash';
 
 interface AuthState {
   token: string | null;
@@ -80,21 +79,30 @@ const authSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    // New action to set token from localStorage on app init
+    initializeAuth: (state, action: PayloadAction<{ token: string | null; user: User | null }>) => {
+      state.token = action.payload.token;
+      state.user = action.payload.user;
+      state.isAuthenticated = !!action.payload.token;
+      state.loading = false;
+    },
   },
   extraReducers: (builder) => {
     // Login
     builder
       .addCase(loginUser.pending, (state) => {
+        state.loading = true;
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        console.log(action);
+        state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token || null;
         state.isAuthenticated = true;
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload as string;
         state.isAuthenticated = false;
       });
@@ -133,6 +141,10 @@ const authSlice = createSlice({
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+        // Still logout on error
+        state.token = null;
+        state.user = null;
+        state.isAuthenticated = false;
       });
 
     // Fetch User
@@ -140,10 +152,9 @@ const authSlice = createSlice({
       .addCase(fetchUser.pending, (state) => {
         state.loading = true;
       })
-      .addCase(fetchUser.fulfilled, (state, { payload }) => {
+      .addCase(fetchUser.fulfilled, (state, action) => {
         state.loading = false;
-        if (isEmpty(payload)) return;
-        // state.user = action.payload;
+        state.user = action.payload;
         state.isAuthenticated = true;
         state.error = null;
       })
@@ -152,12 +163,12 @@ const authSlice = createSlice({
         state.error = action.payload as string;
         state.isAuthenticated = false;
         state.token = null;
-        // state.user = null;
+        state.user = null;
       });
   },
 });
 
-export const { login, logout, setUser, clearError } = authSlice.actions;
+export const { login, logout, setUser, clearError, initializeAuth } = authSlice.actions;
 
 const authReducer = authSlice.reducer;
 export default authReducer;

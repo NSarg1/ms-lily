@@ -1,13 +1,19 @@
-import axios from 'axios';
+import axios from '@/configs/axios.config';
 
 import { ApiResponse, LoginRequest, RegisterRequest, User } from '../service.types';
 
+// Updated response type to match backend response
+interface AuthResponse {
+  message: string;
+  token: string;
+  user: User;
+}
+
 export const authApi = {
   // Authentication
-  login: (body: LoginRequest): Promise<ApiResponse<{ user: User; token?: string }>> => axios.post('/api/login', body),
+  login: (body: LoginRequest): Promise<{ data: AuthResponse }> => axios.post('/api/login', body),
 
-  register: (body: RegisterRequest): Promise<ApiResponse<{ user: User; token?: string }>> =>
-    axios.post('/api/register', body),
+  register: (body: RegisterRequest): Promise<{ data: AuthResponse }> => axios.post('/api/register', body),
 
   logout: (): Promise<ApiResponse<null>> => axios.post('/api/logout'),
 

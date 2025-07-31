@@ -1,11 +1,20 @@
 // src/app/rootReducer.ts
-import { combineReducers } from '@reduxjs/toolkit';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
 import authReducer from './auth/auth.slice';
 
-const rootReducer = combineReducers({
-  auth: authReducer,
-});
+// Persist config for auth slice with loading blacklisted
+const authPersistConfig = {
+  key: 'auth',
+  storage,
+  blacklist: ['loading'], // Don't persist loading state
+};
 
-export type RootState = ReturnType<typeof rootReducer>;
+// Create persisted auth reducer
+const persistedAuthReducer = persistReducer(authPersistConfig, authReducer);
+
+// Root reducer
+const rootReducer = { auth: persistedAuthReducer };
+
 export default rootReducer;

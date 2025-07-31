@@ -1,14 +1,16 @@
+/* eslint-disable simple-import-sort/imports */
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router';
 import { Spin } from 'antd';
 import { PersistGate } from 'redux-persist/integration/react';
 
+import './configs/axios.config';
+
 import App from './App/App.tsx';
 import { ThemeProvider } from './providers/theme/theme.provider.tsx';
 import { persistor, store } from './store/store.ts';
 
-import './configs/axios.config';
 import 'modern-normalize/modern-normalize.css';
 import './styles/index.scss';
 
