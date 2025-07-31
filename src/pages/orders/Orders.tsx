@@ -6,8 +6,12 @@ import styles from './orders.module.scss';
 export const Orders = () => {
   useEffect(() => {
     (async () => {
-      const res = await ordersApi.getUserOrders();
-      console.log(res);
+      try {
+        const res = await ordersApi.getUserOrders({ headers: {} });
+        console.log(res);
+      } catch (error) {
+        console.log(error);
+      }
     })();
   }, []);
 

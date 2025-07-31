@@ -13,6 +13,7 @@ import { AppDispatch, persistor, store } from '@/store/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Route, Routes, useLocation } from 'react-router';
 import { Layout } from 'antd';
+import Cookies from 'js-cookie';
 
 import styles from './app.module.scss';
 
@@ -28,6 +29,8 @@ const App: React.FC = () => {
   }, []);
 
   if (loading) return <Loading />;
+
+  console.log(Cookies.get());
 
   return (
     <Routes>

@@ -1,6 +1,7 @@
 import { authApi } from '@/service/auth/auth.api';
 import { LoginRequest, RegisterRequest, User } from '@/service/service.types';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { isEmpty } from 'lodash';
 
 interface AuthState {
   token: string | null;
@@ -20,8 +21,8 @@ const initialState: AuthState = {
 
 // Async thunks
 export const loginUser = createAsyncThunk('auth/login', async (credentials: LoginRequest, { rejectWithValue }) => {
-  await authApi.getCsrfToken();
   try {
+    await authApi.getCsrfToken();
     const response = await authApi.login(credentials);
     return response.data;
   } catch (error: any) {
@@ -141,9 +142,9 @@ const authSlice = createSlice({
       .addCase(fetchUser.pending, (state) => {
         state.loading = true;
       })
-      .addCase(fetchUser.fulfilled, (state, action) => {
-        console.log(action);
+      .addCase(fetchUser.fulfilled, (state, { payload }) => {
         state.loading = false;
+        if (isEmpty(payload)) return;
         // state.user = action.payload;
         state.isAuthenticated = true;
         state.error = null;

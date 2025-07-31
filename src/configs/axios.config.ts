@@ -4,6 +4,8 @@ axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 axios.defaults.withCredentials = true;
 
 axios.interceptors.request.use((request) => {
+  // Get all cookies
+
   return request;
 });
 

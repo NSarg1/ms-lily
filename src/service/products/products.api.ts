@@ -16,7 +16,7 @@ export const productsApi = {
     category?: string;
     page?: number;
     per_page?: number;
-  }): Promise<ApiResponse<PaginatedResponse<IProduct>>> => axios.get('/api/products', { params }),
+  }): Promise<ApiResponse<PaginatedResponse<IProduct>>> => axios.get('/api/admin/products', { params }),
 
   getProduct: (id: number): Promise<ApiResponse<IProduct>> => axios.get(`/api/products/${id}`),
 
